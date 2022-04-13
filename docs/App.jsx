@@ -163,9 +163,6 @@ export default class App extends React.Component {
                 borderRadius={
                   this.state.width / (100 / this.state.borderRadius)
                 }
-                style={{
-                  border: "5px solid red"
-                }}
                 backgroundColor={this.state.backgroundColor}
                 isMirrored={this.state.isMirrored}
                 onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
