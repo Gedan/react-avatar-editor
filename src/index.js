@@ -145,6 +145,7 @@ class AvatarEditor extends React.Component {
     }),
     color: PropTypes.arrayOf(PropTypes.number),
     backgroundColor: PropTypes.string,
+    isMirrored: PropTypes.bool,
     crossOrigin: PropTypes.oneOf(['', 'anonymous', 'use-credentials']),
 
     onLoadFailure: PropTypes.func,
@@ -167,6 +168,7 @@ class AvatarEditor extends React.Component {
     width: 200,
     height: 200,
     color: [0, 0, 0, 0.5],
+    isMirrored: false,
     onLoadFailure() {},
     onLoadSuccess() {},
     onImageReady() {},
@@ -236,7 +238,8 @@ class AvatarEditor extends React.Component {
       (this.props.image && this.props.image !== prevProps.image) ||
       this.props.width !== prevProps.width ||
       this.props.height !== prevProps.height ||
-      this.props.backgroundColor !== prevProps.backgroundColor
+      this.props.backgroundColor !== prevProps.backgroundColor ||
+      this.props.isMirrored !== prevProps.isMirrored
     ) {
       this.loadImage(this.props.image)
     } else if (!this.props.image && prevState.image !== defaultEmptyImage) {
@@ -259,7 +262,8 @@ class AvatarEditor extends React.Component {
       prevState.mx !== this.state.mx ||
       prevState.image.x !== this.state.image.x ||
       prevState.image.y !== this.state.image.y ||
-      prevState.backgroundColor !== this.state.backgroundColor
+      prevState.backgroundColor !== this.state.backgroundColor ||
+      prevState.isMirrored !== this.state.isMirrored
     ) {
       this.props.onImageChange()
     }
@@ -372,6 +376,10 @@ class AvatarEditor extends React.Component {
         image.resource.width,
         image.resource.height,
       )
+    }
+
+    if (this.props.isMirrored) {
+      context.scale(-1, 1);
     }
 
     context.drawImage(image.resource, -cropRect.x, -cropRect.y)
@@ -528,7 +536,12 @@ class AvatarEditor extends React.Component {
         )
       }
 
-      context.scale(scaleFactor, scaleFactor)
+      if (this.props.isMirrored) {
+        context.translate(context.canvas.width, 0)
+        context.scale(-scaleFactor, scaleFactor)
+      } else {
+        context.scale(scaleFactor, scaleFactor)
+      }
 
       context.globalCompositeOperation = 'destination-over'
       context.drawImage(
@@ -664,7 +677,7 @@ class AvatarEditor extends React.Component {
     rotate = rotate < 0 ? rotate + 360 : rotate
 
     if (this.state.mx && this.state.my) {
-      const mx = this.state.mx - mousePositionX
+      const mx = this.props.isMirrored ? -(this.state.mx - mousePositionX) : this.state.mx - mousePositionX
       const my = this.state.my - mousePositionY
 
       const width = this.state.image.width * this.props.scale
@@ -720,6 +733,7 @@ class AvatarEditor extends React.Component {
       position,
       color,
       backgroundColor,
+      isMirrored,
       // eslint-disable-next-line react/prop-types
       style,
       crossOrigin,

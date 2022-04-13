@@ -18,7 +18,8 @@ export default class App extends React.Component {
     height: 200,
     disableCanvasRotation: false,
     isTransparent: false,
-    backgroundColor: null
+    backgroundColor: null,
+    isMirrored: false
   }
 
   handleNewImage = (e) => {
@@ -129,6 +130,11 @@ export default class App extends React.Component {
     this.setState({ backgroundColor, isTransparent })
   }
 
+  setMirrored = (e) => {
+    const isMirrored = e.target.checked;
+    this.setState({ isMirrored })
+  }
+
   render() {
     return (
       <div>
@@ -157,7 +163,11 @@ export default class App extends React.Component {
                 borderRadius={
                   this.state.width / (100 / this.state.borderRadius)
                 }
+                style={{
+                  border: "5px solid red"
+                }}
                 backgroundColor={this.state.backgroundColor}
+                isMirrored={this.state.isMirrored}
                 onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
                 onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
                 onImageReady={this.logCallback.bind(this, 'onImageReady')}
@@ -288,6 +298,13 @@ export default class App extends React.Component {
           />
           <br />
         </div>}
+        Mirror image?
+          <input
+            name="isMirrored"
+            type="checkbox"
+            onChange={this.setMirrored}
+            defaultChecked={this.state.isMirrored}
+          />
         <br />
         <input type="button" onClick={this.handleSave} value="Preview" />
         <br />
