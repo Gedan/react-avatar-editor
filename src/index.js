@@ -675,9 +675,10 @@ class AvatarEditor extends React.Component {
 
     rotate %= 360
     rotate = rotate < 0 ? rotate + 360 : rotate
+    if (this.props.isMirrored) rotate = -rotate;
 
     if (this.state.mx && this.state.my) {
-      const mx = this.props.isMirrored ? -(this.state.mx - mousePositionX) : this.state.mx - mousePositionX
+      const mx = this.props.isMirrored ? -(this.state.mx - mousePositionX) : (this.state.mx - mousePositionX)
       const my = this.state.my - mousePositionY
 
       const width = this.state.image.width * this.props.scale
